@@ -50,6 +50,49 @@ const MAX_REASON_LENGTH = 300;
 
 var commands = exports.commands = {
 
+	givebadge: function(target, room, user, connection) {
+		if (!this.can('warn')) return false;
+		target = target.split(',');
+		var user = target[0];
+		var badge = target[1];
+		target = this.splitTarget(user);
+		targetUser = this.targetUser;
+		badge = badge.trim();
+		if (!targetUser || !badge) {
+			return this.sendReply('/givebadge - Gives a badge to a User. Requires %@&~');
+		}
+		var bw = fs.createWriteStream('config/badges/badges'+targetUser+'.txt',{'flags':'a'});
+		try {
+			br = fs.readFileSync('config/badges/badges'+targetUser+'.txt','utf8');
+		}catch (e) {
+			return this.parse('/givebadge '+targetUser+','+badge);
+		}
+		if (br.toLowerCase().indexOf(badge.toLowerCase()) > -1) {
+			return this.sendReply('The user '+targetUser+' already has the badge '+badge+'.');
+		}
+		bw.write(badge+', ');
+		return this.sendReply('The user '+targetUser+' has recieved the badge '+badge+'.');
+	},
+	
+	viewbadge:'showbadge',
+	showbadges: 'showbadge',
+	showbadge: function(target, room, user, connection) {
+		if (!this.canBroadcast()) return;
+		target = this.splitTarget(target);
+		targetUser = this.targetUser;
+		if (!targetUser) {
+			return this.parse('/showbadge '+user.name);
+		}
+		try {
+			var br = fs.readFileSync('config/badges/badges'+targetUser+'.txt','utf8');
+		}catch (e) {
+			return this.sendReplyBox('There are no badges for the user '+targetUser+'.');
+		}
+		if (!br) {
+			return this.sendReplyBox('There are no badges for the user '+targetUser+'.');
+		}
+		return this.sendReplyBox('Current Badges of '+targetUser+':'+br);
+	},
 	friendcode: 'fc',
 	fc: function(target, room, user, connection) {
 		if (!target) {
