@@ -643,6 +643,7 @@ kozman: 'koz',
         },
  
         ross: 'zuku',
+        zukushiku:'zuku',
         zuku: function (target, room, user) {
                 if (!this.canBroadcast()) return;
                 this.sendReplyBox ('<center>Trainer:<font color="#9A9C26"><b>Zukushiku</b></font><br />' +
